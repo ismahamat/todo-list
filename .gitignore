@@ -1,0 +1,39 @@
+# =========================
+# Node / Backend
+# =========================
+/backend/node_modules/
+backend/.env
+backend/dist
+backend/npm-debug.log*
+backend/yarn-debug.log*
+backend/yarn-error.log*
+
+# =========================
+# Frontend / Vite + React
+# =========================
+/frontend/node_modules/
+frontend/dist
+frontend/.env
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# =========================
+# IDE / OS
+# =========================
+# MacOS
+.DS_Store
+
+# VSCode
+.vscode/
+
+# Logs
+*.log
+
+# Packages
+*.tgz
+
+# npm
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
