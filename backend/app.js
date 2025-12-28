@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
-import sqlite3 from "sqlite3";
-import { open } from "sqlite";
+import pg from "pg";
 
+const { Pool } = pg;
 const app = express();
 const PORT = 8080;
 
@@ -14,44 +14,62 @@ app.use(cors({
 
 app.use(express.json());
 
-// Initialize Database
-let db;
-(async () => {
-    try {
-        db = await open({
-            filename: './database.sqlite',
-            driver: sqlite3.Database
-        });
-        
-        await db.exec(`
-            CREATE TABLE IF NOT EXISTS tasks (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                text TEXT,
-                details TEXT,
-                completed INTEGER,
-                priority TEXT,
-                category TEXT,
-                dueDate TEXT
-            )
-        `);
-        console.log("✅ Connected to SQLite database");
-    } catch (e) {
-        console.error("❌ Error connecting to database:", e);
+// Initialize Database Connection
+const pool = new Pool({
+  user: process.env.DB_USER || "user",
+  host: process.env.DB_HOST || "localhost",
+  database: process.env.DB_NAME || "todo_db",
+  password: process.env.DB_PASSWORD || "password",
+  port: 5432,
+});
+
+// Initialize Table with Retry Logic
+const connectWithRetry = async () => {
+    let retries = 50; 
+    while (retries) {
+        try {
+            // Ensure table exists
+            await pool.query(`
+                CREATE TABLE IF NOT EXISTS tasks (
+                    id SERIAL PRIMARY KEY,
+                    text TEXT,
+                    details TEXT,
+                    completed BOOLEAN DEFAULT FALSE,
+                    priority TEXT,
+                    category TEXT,
+                    dueDate TEXT
+                )
+            `);
+            
+            // Migrate: Add new columns if they don't exist
+            await pool.query(`
+                ALTER TABLE tasks ADD COLUMN IF NOT EXISTS isArchived BOOLEAN DEFAULT FALSE;
+                ALTER TABLE tasks ADD COLUMN IF NOT EXISTS subtasks JSONB DEFAULT '[]'::jsonb;
+                ALTER TABLE tasks ADD COLUMN IF NOT EXISTS timeEstimate INTEGER DEFAULT 0;
+                ALTER TABLE tasks ADD COLUMN IF NOT EXISTS recurrence TEXT DEFAULT NULL;
+            `);
+
+            console.log("✅ Connected to PostgreSQL database and schema verified");
+            return; // Success
+        } catch (err) {
+            console.log("❌ Database connection failed. Retrying in 5s...", err.message);
+            retries -= 1;
+            await new Promise(res => setTimeout(res, 5000));
+        }
     }
-})();
+    console.error("❌ Could not connect to database after multiple retries");
+    process.exit(1);
+};
+
+connectWithRetry();
 
 // Routes
 
 // GET all tasks
 app.get("/api/tasks", async (req, res) => {
     try {
-        const tasks = await db.all("SELECT * FROM tasks");
-        // Convert integer boolean back to boolean for JSON
-        const formattedTasks = tasks.map(t => ({
-            ...t,
-            completed: !!t.completed
-        }));
-        res.json(formattedTasks);
+        const result = await pool.query("SELECT * FROM tasks ORDER BY id ASC");
+        res.json(result.rows);
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
@@ -59,15 +77,25 @@ app.get("/api/tasks", async (req, res) => {
 
 // POST new task
 app.post("/api/tasks", async (req, res) => {
-    const { text, details, priority, category, dueDate } = req.body;
+    const { text, details, priority, category, dueDate, subtasks, timeEstimate, recurrence } = req.body;
     try {
-        const result = await db.run(
-            `INSERT INTO tasks (text, details, completed, priority, category, dueDate) 
-             VALUES (?, ?, ?, ?, ?, ?)`,
-            [text, details || "", 0, priority || "Low", category || "Général", dueDate || ""]
+        const result = await pool.query(
+            `INSERT INTO tasks (text, details, completed, priority, category, dueDate, subtasks, timeEstimate, isArchived, recurrence) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+            [
+                text, 
+                details || "", 
+                false, 
+                priority || "Low", 
+                category || "Général", 
+                dueDate || "",
+                JSON.stringify(subtasks || []),
+                timeEstimate || 0,
+                false,
+                recurrence || null
+            ]
         );
-        const newTask = await db.get("SELECT * FROM tasks WHERE id = ?", result.lastID);
-        res.status(201).json({ ...newTask, completed: false });
+        res.status(201).json(result.rows[0]);
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
@@ -76,23 +104,39 @@ app.post("/api/tasks", async (req, res) => {
 // PUT update task
 app.put("/api/tasks/:id", async (req, res) => {
     const { id } = req.params;
-    const { completed } = req.body;
+    const { text, details, completed, priority, category, dueDate, subtasks, timeEstimate, isArchived, recurrence } = req.body;
     
     try {
-        // Since we only toggle completion in this app mostly, but valid to support others.
-        // For simplicity, let's just update completion if provided.
-        // In a real app we might update other fields. 
-        // Based on frontend 'toggleTask', it sends { completed }.
+        const result = await pool.query(
+            `UPDATE tasks 
+             SET text = COALESCE($1, text), 
+                 details = COALESCE($2, details), 
+                 completed = COALESCE($3, completed), 
+                 priority = COALESCE($4, priority), 
+                 category = COALESCE($5, category), 
+                 dueDate = COALESCE($6, dueDate),
+                 subtasks = COALESCE($7, subtasks),
+                 timeEstimate = COALESCE($8, timeEstimate),
+                 isArchived = COALESCE($9, isArchived),
+                 recurrence = COALESCE($10, recurrence)
+             WHERE id = $11 RETURNING *`,
+            [
+                text, 
+                details, 
+                completed, 
+                priority, 
+                category, 
+                dueDate, 
+                subtasks ? JSON.stringify(subtasks) : null,
+                timeEstimate,
+                isArchived,
+                recurrence,
+                id
+            ]
+        );
         
-        // Convert boolean to integer for SQLite
-        const isCompleted = completed ? 1 : 0;
-        
-        await db.run("UPDATE tasks SET completed = ? WHERE id = ?", [isCompleted, id]);
-        
-        const updatedTask = await db.get("SELECT * FROM tasks WHERE id = ?", id);
-        
-        if (updatedTask) {
-             res.json({ ...updatedTask, completed: !!updatedTask.completed });
+        if (result.rows.length > 0) {
+             res.json(result.rows[0]);
         } else {
              res.status(404).json({ message: "Task not found" });
         }
@@ -105,7 +149,7 @@ app.put("/api/tasks/:id", async (req, res) => {
 app.delete("/api/tasks/:id", async (req, res) => {
     const { id } = req.params;
     try {
-        await db.run("DELETE FROM tasks WHERE id = ?", id);
+        await pool.query("DELETE FROM tasks WHERE id = $1", [id]);
         res.status(204).end();
     } catch (e) {
         res.status(500).json({ error: e.message });

@@ -1,21 +1,47 @@
 :root {
   --font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
-  
-  /* Modern Dark Theme Palette */
-  --color-bg: #0f172a;       /* Slate 900 */
-  --color-surface: #1e293b;  /* Slate 800 */
-  --color-primary: #6366f1;  /* Indigo 500 */
+
+  /* Modern Dark Theme Palette (Default) */
+  --color-bg: #0f172a;
+  /* Slate 900 */
+  --color-surface: #1e293b;
+  /* Slate 800 */
+  --color-primary: #6366f1;
+  /* Indigo 500 */
   --color-primary-hover: #4f46e5;
-  --color-text: #f8fafc;     /* Slate 50 */
-  --color-text-dim: #94a3b8; /* Slate 400 */
-  --color-border: #334155;   /* Slate 700 */
-  
+  --color-text: #f8fafc;
+  /* Slate 50 */
+  --color-text-dim: #94a3b8;
+  /* Slate 400 */
+  --color-border: #334155;
+  /* Slate 700 */
+
   --color-success: #10b981;
   --color-danger: #ef4444;
   --color-warning: #f59e0b;
+  --color-urgent: #ef4444;
 
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+[data-theme='light'] {
+  --color-bg: #f8fafc;
+  /* Slate 50 */
+  --color-surface: #ffffff;
+  /* White */
+  --color-primary: #4f46e5;
+  /* Indigo 600 */
+  --color-primary-hover: #4338ca;
+  --color-text: #0f172a;
+  /* Slate 900 */
+  --color-text-dim: #64748b;
+  /* Slate 500 */
+  --color-border: #e2e8f0;
+  /* Slate 200 */
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.05);
 }
 
 * {
@@ -29,6 +55,7 @@ a {
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
@@ -45,7 +72,9 @@ body {
   padding-top: 4rem;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   line-height: 1.1;
   font-weight: 700;
 }
@@ -57,7 +86,8 @@ button {
   font-family: inherit;
 }
 
-input, select {
+input,
+select {
   font-family: inherit;
   outline: none;
 }
