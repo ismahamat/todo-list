@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import TaskItem from './components/TaskItem';
 import TaskForm from './components/TaskForm';
+import TaskDetailModal from './components/TaskDetailModal';
 
 const API_URL = 'http://localhost:8080/api/tasks';
 
 function App() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedTask, setSelectedTask] = useState(null);
 
   // Fetch tasks
   useEffect(() => {
@@ -58,6 +60,9 @@ function App() {
   // Delete Task
   const deleteTask = async (id) => {
     try {
+      // If deleting selected task, close modal
+      if (selectedTask?.id === id) setSelectedTask(null);
+
       // Optimistic update
       setTasks(tasks.filter(t => t.id !== id));
 
@@ -92,10 +97,18 @@ function App() {
               task={task}
               onToggle={toggleTask}
               onDelete={deleteTask}
+              onClick={() => setSelectedTask(task)}
             />
           ))
         )}
       </div>
+
+      {selectedTask && (
+        <TaskDetailModal
+          task={selectedTask}
+          onClose={() => setSelectedTask(null)}
+        />
+      )}
     </div>
   );
 }

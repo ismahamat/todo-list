@@ -1,16 +1,16 @@
-import { Trash2, Check, ChevronDown, ChevronUp } from 'lucide-react';
-import { useState } from 'react';
+import { Trash2, Check } from 'lucide-react';
 
-const TaskItem = ({ task, onToggle, onDelete }) => {
-    const [expanded, setExpanded] = useState(false);
-
+const TaskItem = ({ task, onToggle, onDelete, onClick }) => {
     return (
-        <div className={`task-item ${expanded ? 'expanded' : ''}`}>
+        <div className="task-item" onClick={onClick} style={{ cursor: 'pointer' }}>
             <div className="task-main">
                 <div className="task-content">
                     <div
                         className={`checkbox ${task.completed ? 'checked' : ''}`}
-                        onClick={() => onToggle(task.id, !task.completed)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onToggle(task.id, !task.completed);
+                        }}
                     >
                         {task.completed && <Check size={14} color="white" />}
                     </div>
@@ -35,18 +35,6 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
                 </div>
 
                 <div className="actions">
-                    {task.details && (
-                        <button
-                            className={`btn-icon ${expanded ? 'active' : ''}`}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setExpanded(!expanded);
-                            }}
-                            title={expanded ? "Hide details" : "Show details"}
-                        >
-                            {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                        </button>
-                    )}
                     <button
                         className="btn-delete"
                         onClick={(e) => {
@@ -59,12 +47,6 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
                     </button>
                 </div>
             </div>
-
-            {expanded && task.details && (
-                <div className="task-details">
-                    <p>{task.details}</p>
-                </div>
-            )}
         </div>
     );
 };
