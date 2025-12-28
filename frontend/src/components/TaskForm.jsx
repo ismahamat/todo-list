@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Repeat } from 'lucide-react';
 
 const TaskForm = ({ onAdd }) => {
     const [text, setText] = useState('');
@@ -7,17 +7,19 @@ const TaskForm = ({ onAdd }) => {
     const [priority, setPriority] = useState('Medium');
     const [category, setCategory] = useState('');
     const [dueDate, setDueDate] = useState('');
+    const [recurrence, setRecurrence] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!text.trim()) return;
 
-        onAdd({ text, details, priority, category, dueDate });
+        onAdd({ text, details, priority, category, dueDate, recurrence: recurrence || null });
         setText('');
         setDetails('');
         setCategory('');
         setDueDate('');
         setPriority('Medium');
+        setRecurrence('');
     };
 
     return (
@@ -48,9 +50,10 @@ const TaskForm = ({ onAdd }) => {
                 onChange={(e) => setPriority(e.target.value)}
                 style={{ width: 'auto' }}
             >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
+                <option value="Low">Faible</option>
+                <option value="Medium">Moyenne</option>
+                <option value="High">Haute</option>
+                <option value="Urgent">Urgent</option>
             </select>
 
             <input
@@ -60,6 +63,19 @@ const TaskForm = ({ onAdd }) => {
                 onChange={(e) => setDueDate(e.target.value)}
                 style={{ width: 'auto' }}
             />
+
+            <select
+                className="input-primary"
+                value={recurrence}
+                onChange={(e) => setRecurrence(e.target.value)}
+                style={{ width: 'auto' }}
+                title="Recurrence"
+            >
+                <option value="">Aucune</option>
+                <option value="daily">Jour</option>
+                <option value="weekly">Semaine</option>
+                <option value="monthly">Mois</option>
+            </select>
 
             <button type="submit" className="btn-primary">
                 <Plus size={20} />
