@@ -1,35 +1,103 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
+import './App.css';
+import TaskItem from './components/TaskItem';
+import TaskForm from './components/TaskForm';
+
+const API_URL = 'http://localhost:8080/api/tasks';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch tasks
+  useEffect(() => {
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => {
+        setTasks(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error fetching tasks:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  // Add Task
+  const addTask = async (taskData) => {
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(taskData)
+      });
+      const newTask = await res.json();
+      setTasks([...tasks, newTask]);
+    } catch (err) {
+      console.error("Error adding task:", err);
+    }
+  };
+
+  // Toggle Task Completion
+  const toggleTask = async (id, completed) => {
+    try {
+      // Optimistic update
+      setTasks(tasks.map(t => t.id === id ? { ...t, completed } : t));
+
+      await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ completed })
+      });
+    } catch (err) {
+      console.error("Error updating task:", err);
+      // Revert on error would go here
+    }
+  };
+
+  // Delete Task
+  const deleteTask = async (id) => {
+    try {
+      // Optimistic update
+      setTasks(tasks.filter(t => t.id !== id));
+
+      await fetch(`${API_URL}/${id}`, {
+        method: 'DELETE'
+      });
+    } catch (err) {
+      console.error("Error deleting task:", err);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="container">
+      <header className="header">
+        <h1>Todo Master</h1>
+        <p className="subtitle">Organize your life with style</p>
+      </header>
+
+      <TaskForm onAdd={addTask} />
+
+      <div className="task-list">
+        {loading ? (
+          <p style={{ textAlign: 'center', color: 'var(--color-text-dim)' }}>Loading tasks...</p>
+        ) : tasks.length === 0 ? (
+          <div className="glass-panel" style={{ textAlign: 'center' }}>
+            <p>No tasks yet. Add one above!</p>
+          </div>
+        ) : (
+          tasks.map(task => (
+            <TaskItem
+              key={task.id}
+              task={task}
+              onToggle={toggleTask}
+              onDelete={deleteTask}
+            />
+          ))
+        )}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
