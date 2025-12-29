@@ -50,10 +50,10 @@ const TaskForm = ({ onAdd }) => {
                 onChange={(e) => setPriority(e.target.value)}
                 style={{ width: 'auto' }}
             >
-                <option value="Low">Faible</option>
-                <option value="Medium">Moyenne</option>
-                <option value="High">Haute</option>
-                <option value="Urgent">Urgent</option>
+                <option value="Faible">Faible</option>
+                <option value="Moyenne">Moyenne</option>
+                <option value="Haute">Haute</option>
+                <option value="Urgente">Urgente</option>
             </select>
 
             <input
@@ -72,9 +72,9 @@ const TaskForm = ({ onAdd }) => {
                 title="Recurrence"
             >
                 <option value="">Aucune</option>
-                <option value="daily">Jour</option>
-                <option value="weekly">Semaine</option>
-                <option value="monthly">Mois</option>
+                <option value="Jour">Jour</option>
+                <option value="Semaine">Semaine</option>
+                <option value="Mois">Mois</option>
             </select>
 
             <button type="submit" className="btn-primary">

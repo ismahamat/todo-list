@@ -76,13 +76,13 @@ const TaskDetailModal = ({ task, onClose, onUpdate }) => {
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-content glass-panel" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>{isEditing ? "Edit Task" : "Task Details"}</h2>
+          <h2>{isEditing ? "Modifier la tâche" : "Détails de la tâche"}</h2>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             {!isEditing && (
               <button
                 className="btn-icon"
                 onClick={toggleArchive}
-                title={task.isArchived ? "Unarchive" : "Archive"}
+                title={task.isArchived ? "Désarchiver" : "Archiver"}
                 style={{ color: task.isArchived ? 'var(--color-warning)' : 'inherit' }}
               >
                 <Archive size={20} />
@@ -91,7 +91,7 @@ const TaskDetailModal = ({ task, onClose, onUpdate }) => {
             <button
               className="btn-icon"
               onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-              title={isEditing ? "Save" : "Edit"}
+              title={isEditing ? "Sauvegarder" : "Modifier"}
             >
               {isEditing ? <Save size={20} /> : <Pencil size={20} />}
             </button>
@@ -110,7 +110,7 @@ const TaskDetailModal = ({ task, onClose, onUpdate }) => {
                 value={formData.text}
                 onChange={handleChange}
                 className="input-primary"
-                placeholder="Task title"
+                placeholder="Titre de la tâche"
               />
 
               <div style={{ display: 'flex', gap: '1rem' }}>
@@ -120,10 +120,10 @@ const TaskDetailModal = ({ task, onClose, onUpdate }) => {
                   onChange={handleChange}
                   style={{ flex: 1 }}
                 >
-                  <option value="Low">Faible Priorité</option>
-                  <option value="Medium">Moyenne Priorité</option>
-                  <option value="High">Haute Priorité</option>
-                  <option value="Urgent">Urgente Priorité</option>
+                  <option value="Faible">Faible Priorité</option>
+                  <option value="Moyenne">Moyenne Priorité</option>
+                  <option value="Haute">Haute Priorité</option>
+                  <option value="Urgente">Urgente Priorité</option>
                 </select>
 
                 <select
@@ -167,7 +167,7 @@ const TaskDetailModal = ({ task, onClose, onUpdate }) => {
                 value={formData.details || ''}
                 onChange={handleChange}
                 className="input-primary"
-                placeholder="Add details..."
+                placeholder="Ajouter des détails..."
                 rows={4}
                 style={{ fontFamily: 'inherit' }}
               />
@@ -181,7 +181,7 @@ const TaskDetailModal = ({ task, onClose, onUpdate }) => {
                   <input
                     type="text"
                     className="input-primary"
-                    placeholder="Add subtask (Press Enter)"
+                    placeholder="Ajouter une sous-tâche (Appuyez sur Entrée)"
                     value={newSubtask}
                     onChange={(e) => setNewSubtask(e.target.value)}
                     onKeyDown={addSubtask}

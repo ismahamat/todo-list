@@ -317,25 +317,25 @@
   white-space: nowrap;
 }
 
-.tag.high {
+.tag.haute {
   background: rgba(239, 68, 68, 0.15);
   color: #fca5a5;
   border: 1px solid rgba(239, 68, 68, 0.25);
 }
 
-.tag.medium {
+.tag.moyenne {
   background: rgba(245, 158, 11, 0.15);
   color: #fcd34d;
   border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
-.tag.low {
+.tag.faible {
   background: rgba(16, 185, 129, 0.15);
   color: #6ee7b7;
   border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
-.tag.urgent {
+.tag.urgente {
   background: rgba(239, 68, 68, 0.25);
   color: #fca5a5;
   border: 1px solid rgba(239, 68, 68, 0.5);
