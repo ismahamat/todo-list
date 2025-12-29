@@ -53,7 +53,7 @@ git clone https://github.com/ismahamat/todo-list.git
 cd todo-list
 ```
 
-### 3. Installation des Dépendances
+### 3. Installation des Dépendances (si vous êtes développeur, sinon passez à l'étape suivante)
 
 Après avoir cloné le projet, installez les dépendances pour le backend et le frontend :
 
