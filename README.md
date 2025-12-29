@@ -3,7 +3,7 @@
 Bienvenue dans la documentation complète du projet **Todo List**. Cette application est une solution 'fullstack' déployée sur Kubernetes.
 ---
 
-## 🏗 Architecture
+## Architecture
 
 Le projet repose sur une architecture micro-services orchestrée par **Kubernetes**.
 
@@ -33,7 +33,7 @@ graph LR
 
 ---
 
-## 🚀 Guide d'Installation
+## Guide d'Installation
 
 ### 1. Pré-requis
 
@@ -53,7 +53,27 @@ git clone https://github.com/ismahamat/todo-list.git
 cd todo-list
 ```
 
-### 3. Lancer l'Application
+### 3. Installation des Dépendances
+
+Après avoir cloné le projet, installez les dépendances pour le backend et le frontend :
+
+```bash
+# Installation des dépendances du backend
+cd backend
+npm install
+
+# Installation des dépendances du frontend
+cd ../frontend
+npm install
+
+# Retour à la racine du projet
+cd ..
+```
+---
+
+## Déploiement sur Kubernetes (Minikube)
+
+### 1. Lancer l'Application
 
 Nous avons simplifié le déploiement avec un script automatisé.
 
@@ -102,7 +122,7 @@ Voici un aperçu détaillé du contenu du dépôt.
 
 ---
 
-## 🛠 Commandes Utiles
+## Commandes Utiles
 
 Pour une personne administrant le projet, voici quelques commandes essentielles :
 
@@ -128,7 +148,7 @@ minikube service frontend --url
 
 ---
 
-## 📝 Configuration (YAML)
+## Configuration (YAML)
 
 Les fichiers dans `k8s/` définissent l'infrastructure :
 
@@ -136,3 +156,15 @@ Les fichiers dans `k8s/` définissent l'infrastructure :
 - **`backend.yaml`** : Expose le port 8080 en ClusterIP (interne uniquement).
 - **`postgres.yaml`** : Configure le stockage persistant et les identifiants de base de données.
 
+---
+
+## Pourquoi Minikube ?
+
+Dans le cadre de ce projet scolaire, nous avons choisi **Minikube** plutôt qu'un cluster Kubernetes cloud (GKE, EKS, AKS...) pour plusieurs raisons :
+
+- **Gratuit** : Minikube fonctionne entièrement en local, sans frais de cloud computing.
+- **Simplicité** : Installation rapide et aucune configuration de compte cloud ou de facturation nécessaire.
+- **Apprentissage** : Permet de comprendre les concepts Kubernetes (Pods, Services, Deployments, PVC) dans un environnement contrôlé.
+- **Portabilité** : Chaque développeur peut reproduire l'environnement sur sa propre machine.
+
+> **Note** : Pour un environnement de production, un cluster cloud managé avec un pipeline CI/CD serait recommandé pour bénéficier de la haute disponibilité, du scaling automatique et du déploiement continu.
