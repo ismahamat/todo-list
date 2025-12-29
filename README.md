@@ -167,4 +167,14 @@ Dans le cadre de ce projet scolaire, nous avons choisi **Minikube** plutôt qu'u
 - **Apprentissage** : Permet de comprendre les concepts Kubernetes (Pods, Services, Deployments, PVC) dans un environnement contrôlé.
 - **Portabilité** : Chaque développeur peut reproduire l'environnement sur sa propre machine.
 
-> **Note** : Pour un environnement de production, un cluster cloud managé avec un pipeline CI/CD serait recommandé pour bénéficier de la haute disponibilité, du scaling automatique et du déploiement continu.
+---
+
+## Crédits
+
+Projet réalisé par :
+
+- **Issa MAHAMAT**
+- **Paul BERLEMONT**
+- **Florian BOZEL**
+- **Keveen BOUENDJA**
+- **Timothy OUPINDRIN**
