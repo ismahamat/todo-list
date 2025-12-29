@@ -169,8 +169,8 @@ function App() {
         >
           {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
         </button>
-        <h1>Todo Master</h1>
-        <p className="subtitle">Organize your life with style</p>
+        <h1>Todo Least</h1>
+        <p className="subtitle">Organisez votre vie en créant des tâches simples et efficaces.</p>
       </header>
 
       {/* Progress Bar */}
@@ -201,10 +201,10 @@ function App() {
 
       <div className="task-list">
         {loading ? (
-          <p style={{ textAlign: 'center', color: 'var(--color-text-dim)' }}>Loading tasks...</p>
+          <p style={{ textAlign: 'center', color: 'var(--color-text-dim)' }}>Chargement des tâches...</p>
         ) : filteredTasks.length === 0 ? (
           <div className="glass-panel" style={{ textAlign: 'center' }}>
-            <p>No tasks found.</p>
+            <p>Aucune tâche trouvée.</p>
           </div>
         ) : (
           <DndContext
