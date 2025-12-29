@@ -105,7 +105,7 @@ const TaskItem = ({ task, onToggle, onDelete, onClick }) => {
                     )}
                     {task.isArchived && (
                         <span className="tag" style={{ background: 'var(--color-warning)', color: '#000', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <Archive size={12} /> Archived
+                            <Archive size={12} /> Archivée
                         </span>
                     )}
                     {task.recurrence && (
