@@ -245,7 +245,7 @@ const TaskDetailModal = ({ task, onClose, onUpdate }) => {
                   <h4>
                     Subtasks ({formData.subtasks.filter(t => t.completed).length}/{formData.subtasks.length})
                   </h4>
-                  <div className="progress-track" style={{ marginBottom: '1rem', height: '4px' }}>
+                  <div className="progress-track" style={{ marginBottom: '1rem', height: '5px' }}>
                     <div
                       className="progress-fill"
                       style={{
